@@ -1,6 +1,6 @@
 clinical_variant_files
 .ipynb_checkpoints
 __pycache__
-ENA_metadata
+data
 *.csv
 *.rar

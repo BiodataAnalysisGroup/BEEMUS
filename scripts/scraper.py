@@ -33,7 +33,7 @@ if __name__ == '__main__':
     if jresponse['success'] and jresponse['results'].keys():
         data = pd.DataFrame.from_dict(jresponse['results'][lineage])
         data['amino acid'] = data['mutation'].str.split(':',1).str[1]
-        file_name = "{lineage}_f{freq}.csv".format(lineage = lineage, freq = freq)
+        file_name = "data/lineages/{lineage}_f{freq}.csv".format(lineage = lineage, freq = freq)
         data.to_csv(file_name, index = False)
         print("Data has been saved to the {} file in the current directory.".format(file_name))
     else:
