@@ -10,23 +10,34 @@ from os import listdir
 from os.path import isfile, join, split
 import time
 
+from src.helpers import *
+
 class parser:
 
-    def __init__(self, clinical_data_path, metadata, lineages_data):
+    def __init__(self, clinical_data_path, metadata = 0, lineages_data = 0):
         self.clinical_data_path = clinical_data_path
         self.metadata = metadata
         self.lineages_data = lineages_data
         self.ref_len = 29903
-        
-        self.vcfs_paths = [f for f in listdir(self.clinical_data_path) if isfile(join(self.clinical_data_path, f))]
-        self.vcfs_prefixes = [k.split('_', 1)[0] for k in self.vcfs_paths]
-        self.data = np.zeros((len(self.vcfs_paths), self.ref_len), dtype = 'int8') # init a bin table
-        
-        print(len(self.vcfs_paths), 'vcfs have been loaded.')
-        print('Processing...')
-        start = time.time()
-        self.__run_through_files()
-        print('Processing done in', time.time() - start, 'secs.')
+
+    def convert_to_bin(self):
+        if (self.metadata != 0) and (self.lineages_data != 0):
+            self.vcfs_paths, self.vcfs_prefixes = self.__get_files_paths_and_prefixes(self.clinical_data_path)
+            # self.vcfs_paths = [f for f in listdir(self.clinical_data_path) if isfile(join(self.clinical_data_path, f))]
+            # self.vcfs_prefixes = [k.split('_', 1)[0] for k in self.vcfs_paths]
+            self.data = np.zeros((len(self.vcfs_paths), self.ref_len), dtype = 'int8') # init a bin table
+            
+            print(len(self.vcfs_paths), 'vcfs have been loaded.')
+            print('Processing...')
+            start = time.time()
+            self.__run_through_files()
+            print('Processing done in', time.time() - start, 'secs.')
+        return
+
+    def __get_files_paths_and_prefixes(self, dir):
+        vcfs_paths = [f for f in listdir(dir) if isfile(join(dir, f))]
+        vcfs_prefixes = [k.split('_', 1)[0] for k in vcfs_paths]
+        return vcfs_paths, vcfs_prefixes
         
     def __is_there_metadata(self, idx):
         if idx in self.metadata.index and pd.notna(self.metadata.loc[idx, 'lineage']):
@@ -137,3 +148,38 @@ class parser:
                 self.__parse(rec, i, lin_mutations, is_there_metadata)
         #     break
         self.data = pd.DataFrame(data = self.data, index = self.vcfs_prefixes, dtype = 'int8')
+
+    def get_snp_from_pos(self, chrom, position, samples):
+        vcfs_paths, vcfs_prefixes = self.__get_files_paths_and_prefixes(self.clinical_data_path)
+        
+        try:
+            idx = [vcfs_prefixes.index(k) for k in samples]
+        except:
+            print("Value is not in the list.")
+            return
+        
+        vcfs_paths = [vcfs_paths[k] for k in idx]
+        total = 0
+        snps = {}
+        for i, file in enumerate(vcfs_paths):
+            bcf_in = VariantFile(join(self.clinical_data_path, file))  # auto-detect input format
+
+            # print(file)
+            region_string = "{chrom}:{start}-{stop}".format(chrom = chrom, \
+                                                            start = position, \
+                                                            stop = position)
+            for rec in bcf_in.fetch(region = region_string):
+                total = total + 1
+                if len(rec.ref) == len(rec.alts[0]):
+                    # print('Substitution')
+                    ref = rec.ref
+                    alt = rec.alts[0]
+                    snps = increase_value_of_dict_by_value(snps, ref + '/' + alt, 1)
+                elif len(rec.ref) > len(rec.alts[0]):
+                    # print('Deletion')
+                    ref = rec.ref[position - rec.pos]
+                    alt = '-'
+                    snps = increase_value_of_dict_by_value(snps, ref + '/' + alt, 1)
+                elif len(rec.ref) < len(rec.alts[0]):
+                    print('Insertion')                
+        return total, snps
