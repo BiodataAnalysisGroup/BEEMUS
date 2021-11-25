@@ -131,11 +131,34 @@ def increase_value_of_dict_by_value(d, key, value):
             d[key] = 1
         return d
 
+def increase_value_of_dict_by_value_new(d, key, value):
+        if key in d:
+            d[key] = d[key] + value
+        else:
+            d[key] = value
+        return d
+
 def remove_nan_from_list_of_lists(list):
     try:
         return [[z_ij for z_ij in z_i if not pd.isna(z_ij)] for z_i in list]
     except TypeError:
         return list
+
+def remove_nan_from_dict_of_lists(dict):
+    try:
+        for key, value in dict.items():
+            dict[key] = [element for element in value if not pd.isna(element)]
+        return dict
+    except TypeError:
+        return dict
+
+def int_dict_of_lists(dict):
+    try:
+        for key, value in dict.items():
+            dict[key] = [int(element) for element in value]
+        return dict
+    except TypeError:
+        return dict
 
 def remove_nan_from_list(list):
     try:
@@ -150,16 +173,11 @@ def extend_list(list1, data):
         list1.append(data)
     return list1
     
-# def union_get_indices(list1, list2):
-#     list1_indices = []
-#     list2_indices = []
-#     for i, lst1 in enumerate(list1):
-#         for j, lst2 in enumerate(list2):
-#             if lst1 == lst2:
-
-
-
-# return list1_indices, list2_indices
+def flatten_list_of_lists(list):
+    try:
+        return [z for sublist in list for z in sublist]
+    except TypeError:
+        return list 
 
 def list_to_index_val_dict(lst):
     msk = [1] * len(lst)
