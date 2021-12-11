@@ -195,3 +195,6 @@ def get_indices(x, list):
 
 def get_list_items_from_idx_list(list, indices):
     return [list[i] for i in indices]
+
+def check_if_lists_in_list_have_same_length(list_of_lists):
+    return all(len(i) == len(list_of_lists[0]) for i in list_of_lists)
