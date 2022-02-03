@@ -1,9 +1,15 @@
+from abc import abstractproperty
 from IPython.core.display import display, HTML
 import pandas as pd
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 import math
+from scipy.cluster.hierarchy import dendrogram
+import itertools
+
+
 
 
 def force_show_all(df):
@@ -193,8 +199,204 @@ def list_to_index_val_dict(lst):
 def get_indices(x, list):
     return [i for i, value in enumerate(list) if value == x]
 
+def search_elements_in_list(list, elements):
+    list_of_lists_of_indices_of_elements = []
+    for element in elements:
+        list_of_lists_of_indices_of_elements.append([i for i, value in enumerate(list) if value == element])
+    return list_of_lists_of_indices_of_elements
+
 def get_list_items_from_idx_list(list, indices):
     return [list[i] for i in indices]
 
 def check_if_lists_in_list_have_same_length(list_of_lists):
     return all(len(i) == len(list_of_lists[0]) for i in list_of_lists)
+
+def add_prefix_to_list_of_strings(lst, prefix):
+    return [prefix + x for x in lst if not str(x) == "nan"]
+
+def search_in_edges(edges, from_to):
+    res = []
+    for touple in from_to:
+        for edge in edges:
+            if touple[0] == edge[0] and touple[1] == edge[1]:
+                res.append(edge)
+    return res
+
+def search_in_list_of_dics_based_on_key(list, key, value):
+    for i, dict in enumerate(list):
+        if dict[key] == value:
+            return i
+
+def heatmap(data, row_labels, col_labels, ax=None,
+            cbar_kw={}, cbarlabel="", **kwargs):
+    """
+    Create a heatmap from a numpy array and two lists of labels.
+
+    Parameters
+    ----------
+    data
+        A 2D numpy array of shape (M, N).
+    row_labels
+        A list or array of length M with the labels for the rows.
+    col_labels
+        A list or array of length N with the labels for the columns.
+    ax
+        A `matplotlib.axes.Axes` instance to which the heatmap is plotted.  If
+        not provided, use current axes or create a new one.  Optional.
+    cbar_kw
+        A dictionary with arguments to `matplotlib.Figure.colorbar`.  Optional.
+    cbarlabel
+        The label for the colorbar.  Optional.
+    **kwargs
+        All other arguments are forwarded to `imshow`.
+    """
+
+    if not ax:
+        ax = plt.gca()
+
+    # Plot the heatmap
+    im = ax.imshow(data, **kwargs)
+
+    # Create colorbar
+    cbar = ax.figure.colorbar(im, ax=ax, **cbar_kw)
+    cbar.ax.set_ylabel(cbarlabel, rotation=-90, va="bottom")
+
+    # Show all ticks and label them with the respective list entries.
+    plt.xticks(np.arange(data.shape[1]), labels=col_labels, fontsize=6)
+    plt.yticks(np.arange(data.shape[0]), labels=row_labels, fontsize=6)
+
+    # Let the horizontal axes labeling appear on top.
+    ax.tick_params(top=True, bottom=False,
+                   labeltop=True, labelbottom=False)
+
+    # Rotate the tick labels and set their alignment.
+    plt.setp(ax.get_xticklabels(), rotation=-50, ha="right",
+             rotation_mode="anchor")
+
+    # Turn spines off and create white grid.
+    # ax.spines[:].set_visible(False)
+
+    # ax.set_xticks(np.arange(data.shape[1]+1)-.5, minor=True)
+    # ax.set_yticks(np.arange(data.shape[0]+1)-.5, minor=True)
+    # ax.grid(which="minor", color="w", linestyle='-', linewidth=3)
+    ax.tick_params(which="minor", bottom=False, left=False)
+
+    return im, cbar
+
+
+def annotate_heatmap(im, data=None, valfmt="{x:.2f}",
+                     textcolors=("black", "white"),
+                     threshold=None, **textkw):
+    """
+    A function to annotate a heatmap.
+
+    Parameters
+    ----------
+    im
+        The AxesImage to be labeled.
+    data
+        Data used to annotate.  If None, the image's data is used.  Optional.
+    valfmt
+        The format of the annotations inside the heatmap.  This should either
+        use the string format method, e.g. "$ {x:.2f}", or be a
+        `matplotlib.ticker.Formatter`.  Optional.
+    textcolors
+        A pair of colors.  The first is used for values below a threshold,
+        the second for those above.  Optional.
+    threshold
+        Value in data units according to which the colors from textcolors are
+        applied.  If None (the default) uses the middle of the colormap as
+        separation.  Optional.
+    **kwargs
+        All other arguments are forwarded to each call to `text` used to create
+        the text labels.
+    """
+
+    if not isinstance(data, (list, np.ndarray)):
+        data = im.get_array()
+
+    # Normalize the threshold to the images color range.
+    if threshold is not None:
+        threshold = im.norm(threshold)
+    else:
+        threshold = im.norm(data.max())/2.
+
+    # Set default alignment to center, but allow it to be
+    # overwritten by textkw.
+    kw = dict(horizontalalignment="center",
+              verticalalignment="center")
+    kw.update(textkw)
+
+    # Get the formatter in case a string is supplied
+    if isinstance(valfmt, str):
+        valfmt = matplotlib.ticker.StrMethodFormatter(valfmt)
+
+    # Loop over the data and create a `Text` for each "pixel".
+    # Change the text's color depending on the data.
+    texts = []
+    for i in range(data.shape[0]):
+        for j in range(data.shape[1]):
+            kw.update(color=textcolors[int(im.norm(data[i, j]) > threshold)])
+            text = im.axes.text(j, i, valfmt(data[i, j], None), **kw)
+            texts.append(text)
+
+    return texts
+
+def func(x, pos):
+    return "{:.2f}".format(x).replace("0.00", "0").replace("1.00", "1")
+
+def plot_dendrogram(model, **kwargs):
+    # Create linkage matrix and then plot the dendrogram
+
+    # create the counts of samples under each node
+    counts = np.zeros(model.children_.shape[0])
+    n_samples = len(model.labels_)
+    for i, merge in enumerate(model.children_):
+        current_count = 0
+        for child_idx in merge:
+            if child_idx < n_samples:
+                current_count += 1  # leaf node
+            else:
+                current_count += counts[child_idx - n_samples]
+        counts[i] = current_count
+
+    linkage_matrix = np.column_stack(
+        [model.children_, model.distances_, counts]
+    ).astype(float)
+
+    # Plot the corresponding dendrogram
+    dendrogram(linkage_matrix, **kwargs)
+
+def model_tree_to_nested_dics(model, labels):
+    max_node_id = np.max(model.children_) + 1
+    ii = itertools.count(model.n_leaves_)
+    tree = [{'node_id': next(ii), 'left': x[0], 'right':x[1], 'length':model.distances_[i]} for i, x in enumerate(model.children_)]
+    nested_dics = nested_tree(tree, max_node_id, model.n_leaves_, labels)
+    return nested_dics
+
+def nested_tree(tree, node_id, n, labels):
+    j = search_in_list_of_dics_based_on_key(tree, 'node_id', node_id)
+    left = tree[j]['left']
+    right = tree[j]['right']
+    length = tree[j]['length']
+    # print('left = ', left)
+    # print('right = ', right)
+    tree_dict = {'name' : '', 'length' : length, 'branchset' : []}
+
+    if left >= n:
+        tree_dict['branchset'].append(nested_tree(tree, left, n, labels))
+    else:
+        tree_dict['branchset'].append({'name' : labels[left], 'length' : length, 'branchset' : []})
+        
+    if right >= n:
+        tree_dict['branchset'].append(nested_tree(tree, right, n, labels))
+    else:
+        tree_dict['branchset'].append({'name' : labels[right], 'length' : length, 'branchset' : []})
+
+    return tree_dict
+
+def check_if_frequency_is_empty(f):
+    if f != '':
+        return "{:.2f}%".format(float(f))
+    else:
+        return ''
