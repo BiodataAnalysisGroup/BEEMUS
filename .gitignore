@@ -7,3 +7,7 @@ data
 .vscode
 *.pdf
 *.html
+work
+.nextflow.log*
+.nextflow
+new_data

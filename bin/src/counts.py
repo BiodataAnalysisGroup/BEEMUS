@@ -38,3 +38,6 @@ class count_snps:
     def get_snps_from_lineages_clusters_position(self, samples, region, position):
         pp = parser(self.vcfs_indices_path)
         return pp.get_snp_from_pos(region, base_0_to_1(position), samples)
+
+    def set_path(self, path):
+        self.vcfs_indices_path = path

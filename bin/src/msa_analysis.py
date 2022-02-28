@@ -1,12 +1,9 @@
 from Bio import SeqIO
 import numpy as np
 from scipy.stats import entropy
-import matplotlib.pylab as plt
 from sklearn import metrics
 from tqdm.notebook import trange
 from joblib import Parallel, delayed
-
-import json
 
 class msa_parser:
     def __init__(self, fasta_path):

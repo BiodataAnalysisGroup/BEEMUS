@@ -21,7 +21,7 @@ class parser:
         self.ref_len = 29903
 
     def convert_to_bin(self):
-        if (self.metadata != 0) and (self.lineages_data != 0):
+        if (not self.metadata.empty) and (not self.lineages_data.empty):
             self.vcfs_paths, self.vcfs_prefixes = self.__get_files_paths_and_prefixes(self.clinical_data_path)
             # self.vcfs_paths = [f for f in listdir(self.clinical_data_path) if isfile(join(self.clinical_data_path, f))]
             # self.vcfs_prefixes = [k.split('_', 1)[0] for k in self.vcfs_paths]
