@@ -29,8 +29,10 @@ if __name__ == '__main__':
     # request url
     urlreq = "https://api.outbreak.info/genomics/lineage-mutations?pangolin_lineage={lineage}&frequency={freq}".format(lineage = lineage, freq = freq)
 
+    req = urllib.request.Request(urlreq)
+    req.add_header('authorization', 'Bearer 0ed52bbfb6c79d1fd8e9c6f267f9b6311c885a4c4c6f037d6ab7b3a40d586ad0')
     # get response
-    response = urllib.request.urlopen(urlreq)
+    response = urllib.request.urlopen(req)
     # load as json
     jresponse = json.load(response)
 
@@ -39,6 +41,6 @@ if __name__ == '__main__':
         data['amino acid'] = data['mutation'].str.split(':',1).str[1]
         file_name = output_path / "{lineage}_f{freq}.csv".format(lineage = lineage, freq = freq)
         data.to_csv(file_name, index = False)
-        print("Data has been saved to the {} file in the current directory.".format(file_name))
+        print("Data has been saved to the {} file in the {} directory.".format(file_name, output_path))
     else:
         print('Something went wrong!')

@@ -2,7 +2,7 @@ from Bio import SeqIO
 import numpy as np
 from scipy.stats import entropy
 from sklearn import metrics
-from tqdm.notebook import trange
+from tqdm import trange
 from joblib import Parallel, delayed
 
 class msa_parser:

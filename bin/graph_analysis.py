@@ -4,9 +4,6 @@
 ###### Up to now command in order to run this file
 #### python graph_analysis.py --datafolder ../data --datasetname dataset.csv --graphsfolder ../graphs --nodesfilename nodes_all --lineages B.1.1.7 B.1.617.2 AY.12 AY.9 AY.4 B.1.1.318 AY.7 --export_arrow_edges --export_nodes_long_format
 
-import sys
-sys.path.append('../')
-
 import os
 import subprocess
 import argparse
@@ -242,7 +239,7 @@ if __name__ == '__main__':
         # ------------- new method for all lineages -------------
         # Path is not provided and so calculate nodes
 
-        counter.set_path(data_folder / "clinical_variant_files-indices")
+        counter.set_path(data_folder / "indices")
         # # ------------- new method for all lineages in parallel-------------
         def process(i):
             d_pos = {}
@@ -276,7 +273,7 @@ if __name__ == '__main__':
             nodes['based_on_' + bo + '_counts'] = column_counts
             nodes['snps_on_' + bo] = column_snps
 
-        pickle.dump(nodes, open(data_folder / "nodes_all_test1", "wb"))
+        pickle.dump(nodes, open(data_folder / "nodes", "wb"))
     else:
         # Load the existing file
         nodes = pickle.load(open(data_folder / nodes_file_name, "rb"))
@@ -567,7 +564,7 @@ if __name__ == '__main__':
             net.nodes[i]['label'] = " ".join(str(x) for x in list(set(lineage))) + '\n' + str(net.nodes[i]['id'])
             net.nodes[i]['group'] = groups[net.nodes[i]['id']]
             net.nodes[i]['shape'] = "circularImage"
-            net.nodes[i]['image'] = str(graphs_folder / "circular_images/{}.png".format(net.nodes[i]['id']))
+            net.nodes[i]['image'] = str("circular_images/{}.png".format(net.nodes[i]['id']))
     #         net.nodes[i]['color'] = 'black'
         else:
             print('Something went wrong with the lengths')

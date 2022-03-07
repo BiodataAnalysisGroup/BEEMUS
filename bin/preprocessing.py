@@ -6,7 +6,7 @@
 
 import argparse
 from os import listdir
-from os.path import isfile, join, split
+from os.path import isfile, join
 import os
 import pathlib
 import subprocess
@@ -15,12 +15,6 @@ import re
 
 import numpy as np
 import pandas as pd
-
-import matplotlib
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_pdf import PdfPages
-import seaborn as sns
-import statistics
 
 from src.vcfs_parser import parser as vcf_parser
 from src.helpers import *
@@ -96,15 +90,16 @@ if __name__ == '__main__':
     lineages_clasification_path = args.lineagesClasification
     genes_coordinates_path = args.genes_coordinates_path
 
-    # Init programm constants
-    # print(genes_coordinates_path.parent / (genes_coordinates_path.stem + "_simplified.csv"))
+    # Create necessary directories
+    if not os.path.exists(lineages_files):
+        os.makedirs(lineages_files)
 
     tic('Loading genes...')
     genes_coordinates = genes_loading()
     toc('Genes loading completed.')
     
     tic('Loading lineages clasification file...')
-    lineage_metadata = pd.read_csv(lineages_clasification_path, index_col = 'INAB sample ID', skiprows = [1,2])
+    lineage_metadata = pd.read_csv(lineages_clasification_path, index_col = 'id', skiprows = [1,2])
     print(len(lineage_metadata), 'samples with known lineages have been loaded.')
 
     lineage_metadata['lineage'] = lineage_metadata['lineage'].apply(lambda x: re.sub(r" ?\([^)]+\)", "", str(x)))
@@ -124,18 +119,18 @@ if __name__ == '__main__':
     lineages = metadata['lineage'].unique().tolist()
     lineages = [i for i in lineages if pd.notna(i)]
 
-    # # comment out to download the files
-    # for idx, lineage in enumerate(lineages):
-    #     cmd = 'python scraper.py --o ../data/lineages_test --lineage={}'.format(lineage)
-    #     normal = subprocess.run(cmd,
-    #         shell=True,
-    #         stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-    #         check=True,
-    #         text=True)
+    # comment out to download the files
+    for idx, lineage in enumerate(lineages):
+        cmd = 'python bin/scraper.py --o {} --lineage={}'.format(lineages_files, lineage)
+        normal = subprocess.run(cmd,
+            shell=True,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            check=True,
+            text=True)
 
-    #     print(normal.stdout)
-    #     print(normal.stderr)
-    #     print(idx+1, 'files have been downloaded')
+        print(normal.stdout)
+        print(normal.stderr)
+        print(idx+1, 'files have been downloaded')
 
     # comment out to download the files
     # for idx, lineage in enumerate(lineages):
@@ -171,5 +166,6 @@ if __name__ == '__main__':
     result = pd.merge(data, metadata, how='left', left_index = True, right_index = True)
     msk = (result == 0).all() # get rid of columns containing only zeros
     # result = result.loc[:,~msk].copy()
-    result.to_csv(data_folder / "test_dataset.csv")
+    result.to_csv(data_folder / "dataset.csv")
+    pd.DataFrame(result['lineage'].value_counts()).reset_index().rename(columns={"lineage": "counts", "index": "linage"}).to_csv("dataset_summary.csv", index=False)
     toc('Modeling completed.')

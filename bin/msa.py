@@ -5,9 +5,6 @@
 #### python msa.py --datafolder ../data --datasetname dataset.csv --msafilename combined-MSA-keep_length_ep0.1.fasta --graphsfolder ../graphs --nodesfilename nodes_all --treefilepath ../../tree-of-life/files/life.json --lineages B.1.1.7 B.1.617.2 AY.12 AY.9 AY.4 B.1.1.318 AY.7 --nodes_of_interest 23 42 32 14 15 3 16 25 24 2 4 5 33 38 35 61
 
 
-import sys
-# sys.path.append('../')
-
 import os
 import argparse
 import pathlib
@@ -188,6 +185,7 @@ if __name__ == '__main__':
 
     tic('Agglomerative clustering...')
     similarity = 1 - msa.mutual_info
+    similarity[similarity < 0] = 0
 
     # setting distance_threshold=0 ensures we compute the full tree.
     model = AgglomerativeClustering(distance_threshold=0, n_clusters=None, affinity='precomputed', linkage='complete')
@@ -238,7 +236,8 @@ if __name__ == '__main__':
     genes_coordinates['gene_color'] = gene_colors
     # genes_coordinates['gene_color_faded'] = gene_faded_color
 
-    wierd_chars = ['†', 'ψ', '⛥', '✠', 'ɸ', '♣', '▲']
+    wierd_chars = ['†', 'ψ', '⛥', '✠', 'ɸ', '♣', '▲', '✚', '✈', '✔', 
+                    '✖', '❤', '⁂', '⁕', '⁑', '☀', '☁', '☂', '☎', '☢']
     lineages_to_chars = {k : wierd_chars[i] for i, k in enumerate(lineages_of_interest)}
     sorted_edge_metadata = []
 
