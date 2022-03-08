@@ -11,7 +11,7 @@ refFile = file(params.refFolder + "/NC_045512.2.fasta")
 dataFolder = file(params.dataFolder, type: 'dir')
 vcfsFolder = file(params.vcfsFolder, type: 'dir')
 lineagesFolder = file(params.lineagesFolder, type: 'dir')
-lineagesClasificationFile = file(params.dataFolder + "/SARS-CoV-2 lineage meta data.csv")
+lineagesClasificationFile = file(params.dataFolder + "/lineage-classification.csv")
 genesCoordinatesFile = file(params.refFolder + "/NC_045512.2_annot.gff3")
 
 datasets = Channel

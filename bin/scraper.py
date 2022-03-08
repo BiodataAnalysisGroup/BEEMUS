@@ -8,7 +8,6 @@ import urllib.request
 import pandas as pd
 import argparse
 
-
 def init_argparse() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description='Retrieve outbreak lineages information.')
     parser.add_argument('--lineage', type=str, help="The lineage of interest eg. 'B.1.617.2'")

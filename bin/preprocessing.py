@@ -121,7 +121,7 @@ if __name__ == '__main__':
 
     # comment out to download the files
     for idx, lineage in enumerate(lineages):
-        cmd = 'python bin/scraper.py --o {} --lineage={}'.format(lineages_files, lineage)
+        cmd = 'scraper.py --o {} --lineage={}'.format(lineages_files, lineage)
         normal = subprocess.run(cmd,
             shell=True,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE,
@@ -130,7 +130,7 @@ if __name__ == '__main__':
 
         print(normal.stdout)
         print(normal.stderr)
-        print(idx+1, 'files have been downloaded')
+        print(lineage, ' have been downloaded')
 
     # comment out to download the files
     # for idx, lineage in enumerate(lineages):
