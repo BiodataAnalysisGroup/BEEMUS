@@ -72,7 +72,12 @@ class parser:
 
     def __parse(self, record, i, lineage_mutations, is_there_metadata):
     #     retrive the aa information from the ANN field
-        ann = record.info['ANN']
+        try:
+            ann = record.info['ANN']
+        except KeyError as e:
+            print('Something went wrong!')
+            print(e)
+            return
         ann = [k.split('|') for k in ann]
         flag = 1
         if ann[0][10] != '' and is_there_metadata:

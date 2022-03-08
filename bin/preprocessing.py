@@ -167,5 +167,5 @@ if __name__ == '__main__':
     msk = (result == 0).all() # get rid of columns containing only zeros
     # result = result.loc[:,~msk].copy()
     result.to_csv(data_folder / "dataset.csv")
-    pd.DataFrame(result['lineage'].value_counts()).reset_index().rename(columns={"lineage": "counts", "index": "linage"}).to_csv("dataset_summary.csv", index=False)
+    pd.DataFrame(result['lineage'].value_counts()).reset_index().rename(columns={"lineage": "counts", "index": "linage"}).to_csv(data_folder / "dataset_summary.csv", index=False)
     toc('Modeling completed.')

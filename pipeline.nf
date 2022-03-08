@@ -105,6 +105,9 @@ process mafft {
     input:
     path(combinedFasta) from combinedFastaFile
 
+    output:
+    path("MSA.fasta")
+
     """
     mafft --thread -1 --reorder --keeplength --maxambiguous 1.0 --ep 0.1 --addfragments $combinedFasta --auto $refFile | awk '{if (/^>/) print ">New|" substr(\$0,2); else print \$0;}' > MSA.fasta
     """
