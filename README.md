@@ -1,6 +1,6 @@
 # tasmitsThesis
 
-![logo](https://)
+<!-- ![logo](https://) -->
 
 Quick overview
 ==============
@@ -42,7 +42,7 @@ Quick start
     git clone https://github.com/
     ```
 
-4. Create the folders structure inside the project's directory as specified bellow with the exact same names:
+4. Create the folders structure inside the project's directory as specified below with the exact same names:
 
         .
         ├── ...
@@ -71,7 +71,7 @@ Quick start
     nextflow pipeline.nf
     ```
 
-7. Inside the data folder you will find a summary file ``dataset_summary.csv``. Select the most frequently occuring lineages along your dataset and write them down for the next step.
+7. Inside the data folder you will find a summary file ``dataset_summary.csv``. Select the most frequently occurring lineages along your dataset and write them down for the next step.
 
 8. Activate the conda environment:
 
@@ -79,7 +79,7 @@ Quick start
     conda activate sars_work
     ```
 
-9. Run the graph analysis script (from the project's folder), replacing the string after the ``--lineages`` flag, with the lineages of interest in sequential order, separated by space, as shown bellow: 
+9. Run the graph analysis script (from the project's folder), replacing the string after the ``--lineages`` flag, with the lineages of interest in sequential order, separated by space, as shown below: 
 
     ``--lineages B.1.1.7 B.1.617.2 AY.43 BA.1 AY.12 AY.4 AY.122 AY.9 BA.1.1``
     ```
@@ -92,13 +92,13 @@ Quick start
         --export_nodes_long_format
     ```
 
-10. If evrything went well, the ``graph_analysis.py`` script should automaticaly pop up a browser window showing the produced graph, like this depicted bellow, in a non-arranged form, that you should rearrange by drag and drop the nodes based on your preferences. After that we strongly recommend writing down the unique ids of the nodes of interest, separated by space (shown underneath the node's lineage(s)), in groups of interest:
+10. If everything went well, a browser window should automatically pop up, showing the produced graph, like this depicted below, in a non-arranged form, that you should rearrange by drag and drop the nodes based on your preferences. After that we strongly recommend writing down the unique ids of the nodes of interest, separated by space (shown underneath the node's lineage(s)), in groups of interest:
 
     ``E.g. <11 7 9 8> <51 90 72>``
 
     ![Alt text](imgs/graph.png?raw=true "Graph")
 
-11. Run the msa analysis script (from the project's folder), replacing the string after the ``--nodes_of_interest`` ``--lineages`` flag, with the lineages and the nodes of interest in sequential order, separated by space, as shown bellow:
+11. Run the msa analysis script (from the project's folder), replacing the string after the ``--nodes_of_interest`` ``--lineages`` flag, with the lineages and the nodes of interest in sequential order, separated by space, as shown below:
 
     ``--lineages B.1.1.7 B.1.617.2 AY.43 BA.1 AY.12 AY.4 AY.122 AY.9 BA.1.1``
     ``--nodes_of_interest 39 34 86``    
@@ -130,13 +130,13 @@ Quick start
 Contributing
 ============
 
-Project contribution are more than welcome. See the [CONTRIBUTING](CONTRIBUTING.md) file for details.
+Project contribution are more than welcome. 
 
 
 License
 =======
 
-This project is released under the MIT license.
+This project is released under the MIT license. See the [LICENSE](LICENSE.md) file for details.
 
 Citations
 =========
