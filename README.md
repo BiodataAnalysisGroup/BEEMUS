@@ -79,9 +79,9 @@ Quick start
     conda activate sars_work
     ```
 
-9. Run the graph analysis script (being in the project's folder): 
+9. Run the graph analysis script (from the project's folder), replacing the string after the ``--lineages`` flag, with the lineages of interest in sequential order, separated by space, as shown bellow: 
 
-    ``<B.1.1.7 B.1.617.2 AY.43 BA.1 AY.12 AY.4 AY.122 AY.9 BA.1.1>``
+    ``--lineages B.1.1.7 B.1.617.2 AY.43 BA.1 AY.12 AY.4 AY.122 AY.9 BA.1.1``
     ```
     python bin/graph_analysis.py \
         --datafolder data/ \
@@ -92,9 +92,16 @@ Quick start
         --export_nodes_long_format
     ```
 
-10. Run the msa analysis script (being in the project's folder):
+10. If evrything went well, the ``graph_analysis.py`` script should automaticaly pop up a browser window showing the produced graph, like this depicted bellow, in a non-arranged form, that you should rearrange by drag and drop the nodes based on your preferences. After that we strongly recommend writing down the unique ids of the nodes of interest, separated by space (shown underneath the node's lineage(s)), in groups of interest:
 
-    ``<39 34 86>``    
+    ``E.g. <11 7 9 8> <51 90 72>``
+
+    ![Alt text](imgs/graph.png?raw=true "Graph")
+
+11. Run the msa analysis script (from the project's folder), replacing the string after the ``--nodes_of_interest`` ``--lineages`` flag, with the lineages and the nodes of interest in sequential order, separated by space, as shown bellow:
+
+    ``--lineages B.1.1.7 B.1.617.2 AY.43 BA.1 AY.12 AY.4 AY.122 AY.9 BA.1.1``
+    ``--nodes_of_interest 39 34 86``    
     ```
     python bin/msa.py \
         --datafolder data \
@@ -106,6 +113,19 @@ Quick start
         --lineages <lineages in sequential order separated by space> \
         --nodes_of_interest <nodes of interest in sequential order separated by space>
     ```
+
+    - You can run the ``msa.py`` script as many times as it is necessary, while using different nodes of interest.
+    - Caution! Remember to change the ``--treefilepath`` file name along different running, since it will replace the previous file each time it executes.
+
+12. Go to the ``tree-of-life`` folder (from the project's folder) and start a local http server using python:
+
+    ```
+    cd ../tree-of-life
+    python -m http.server
+    ```
+13. Open a browser of your choice and type ``http://127.0.0.1:8000/``. If everything is all right, you will be able to see a tree graph such as the following:
+
+    ![Alt text](imgs/tree-example.png?raw=true "Tree of Life")
 
 Contributing
 ============
