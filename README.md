@@ -90,6 +90,7 @@ Quick start
         --lineages <lineages in sequential order separated by space> \
         --export_arrow_edges \
         --export_nodes_long_format
+        --plot_dates_vs_nodes
     ```
 
 10. If everything went well, a browser window should automatically pop up, showing the produced graph, like this depicted below, in a non-arranged form, that you should rearrange by drag and drop the nodes based on your preferences. After that we strongly recommend writing down the unique ids of the nodes of interest, separated by space (shown underneath the node's lineage(s)), in groups of interest:

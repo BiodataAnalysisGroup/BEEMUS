@@ -144,7 +144,7 @@ def plot_collenction_dates_vs_nodes():
     ax.set_xlabel('Nodes')
     ax.legend()
     ax.grid(True)
-
+    plt.tight_layout()
     plt.savefig(graphs_folder / "dates_vs_nodes.pdf", format='pdf')
     plt.clf()
     

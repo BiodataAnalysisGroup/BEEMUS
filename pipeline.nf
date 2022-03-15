@@ -30,7 +30,7 @@ process data_pre_processing {
 
     script:
     """
-    preprocessing.py --datafolder $dataFolder --vcfs $vcfsFolder --lineagesfiles $lineagesFolder --lineagesClasification "$lineagesClasificationFile" --genes_coordinates_path $genesCoordinatesFile
+    preprocessing.py --datafolder $dataFolder --vcfs $vcfsFolder --lineagesfiles $lineagesFolder --lineagesClasification "$lineagesClasificationFile" --genes_coordinates_path $genesCoordinatesFile --plot_samples_vs_positions
     """
 }
 

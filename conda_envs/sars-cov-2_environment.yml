@@ -1,4 +1,4 @@
-name: sars-work
+name: sars
 channels:
   - bioconda
   - plotly

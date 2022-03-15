@@ -10,8 +10,10 @@ from os.path import isfile, join
 import os
 import pathlib
 import subprocess
-from tqdm.notebook import trange
 import re
+
+import matplotlib
+import matplotlib.pyplot as plt
 
 import numpy as np
 import pandas as pd
@@ -27,10 +29,7 @@ def init_argparse() -> argparse.ArgumentParser:
     parser.add_argument('--lineagesfiles', type=pathlib.Path, required=True)
     parser.add_argument('--lineagesClasification', type=pathlib.Path, required=True)
     parser.add_argument('--genes_coordinates_path', type=pathlib.Path, required=True)
-
-
-
-
+    parser.add_argument('--plot_samples_vs_positions', action='store_true', help="Plot samples vs no-zero positions of the genome.")
 
     return parser
 
@@ -76,7 +75,31 @@ def genes_loading():
     genes_coordinates.to_csv(genes_coordinates_path.parent / (genes_coordinates_path.stem + "_simplified.csv"))
     return genes_coordinates
 
+def plot_samplesvspositions(data, msk):
+    fig, ax = plt.subplots()
 
+    for item in [fig, ax]:
+        item.patch.set_visible(False)
+
+    # define the colors
+    cmap = matplotlib.colors.ListedColormap(['g', 'k', 'r'])
+
+    # create a normalize object the describes the limits of
+    # each color
+    bounds = [0., 0.5, 1.1, 2.1]
+    norm = matplotlib.colors.BoundaryNorm(bounds, cmap.N)
+
+    fig.colorbar(matplotlib.cm.ScalarMappable(norm=norm, cmap=cmap), ax=ax)
+
+    ax.xaxis.set_tick_params(pad=5, labelsize=4)
+    ax.yaxis.set_tick_params(pad=5, labelsize=4)
+    fig.figure(facecolor='yellow')
+    # plot it
+    ax.imshow(data.loc[:,~msk].astype(float), interpolation='none', cmap=cmap, norm=norm)
+    plt.savefig(data_folder / 'samples_vs_positions.pdf', format = 'pdf')  
+    plt.clf()
+    
+    return
 
 if __name__ == '__main__':
     
@@ -89,6 +112,7 @@ if __name__ == '__main__':
     lineages_files = args.lineagesfiles
     lineages_clasification_path = args.lineagesClasification
     genes_coordinates_path = args.genes_coordinates_path
+    plot_samples_vs_positions = args.plot_samples_vs_positions
 
     # Create necessary directories
     if not os.path.exists(lineages_files):
@@ -120,17 +144,17 @@ if __name__ == '__main__':
     lineages = [i for i in lineages if pd.notna(i)]
 
     # comment out to download the files
-    for idx, lineage in enumerate(lineages):
-        cmd = 'scraper.py --o {} --lineage={}'.format(lineages_files, lineage)
-        normal = subprocess.run(cmd,
-            shell=True,
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-            check=True,
-            text=True)
+    # for idx, lineage in enumerate(lineages):
+    #     cmd = 'scraper.py --o {} --lineage={}'.format(lineages_files, lineage)
+    #     normal = subprocess.run(cmd,
+    #         shell=True,
+    #         stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+    #         check=True,
+    #         text=True)
 
-        print(normal.stdout)
-        print(normal.stderr)
-        print(lineage, ' have been downloaded')
+    #     print(normal.stdout)
+    #     print(normal.stderr)
+    #     print(lineage, ' have been downloaded')
 
     # comment out to download the files
     # for idx, lineage in enumerate(lineages):
@@ -164,8 +188,12 @@ if __name__ == '__main__':
     data = p.data
 
     result = pd.merge(data, metadata, how='left', left_index = True, right_index = True)
-    msk = (result == 0).all() # get rid of columns containing only zeros
-    # result = result.loc[:,~msk].copy()
+    
     result.to_csv(data_folder / "dataset.csv")
     pd.DataFrame(result['lineage'].value_counts()).reset_index().rename(columns={"lineage": "counts", "index": "linage"}).to_csv(data_folder / "dataset_summary.csv", index=False)
+
+    if plot_samples_vs_positions:
+        msk = (result == 0).all() # get rid of columns containing only zeros
+        # result = result.loc[:,~msk].copy()
+        plot_samplesvspositions(data, msk)
     toc('Modeling completed.')
