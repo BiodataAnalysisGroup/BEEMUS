@@ -1,10 +1,10 @@
-# tasmitsThesis
+# BEEMUS: Bioinformatics for the Evolution of Emerging MUtations in SARS-CoV-2
 
 <!-- ![logo](https://) -->
 
 Quick overview
 ==============
-This is a private repository containing Anastasios Mitsigkolas master thesis/internship
+Assessing SARS-CoV-2 evolution through the analysis of emerging mutations
 
 ## Contents
 - [Rationale](#rationale)
@@ -17,9 +17,7 @@ This is a private repository containing Anastasios Mitsigkolas master thesis/int
 
 Rationale
 =========
-
-
-
+In this study, we present a novel method for detecting patterns of co-occuring mutations beyond strain-specific / strain-defining ones and making use of those patterns in an endeavor to group samples in such a way that they could indicate evolutionary paths of the virus. In otherwords, mutational occurrence patterns might suggest different ways of grouping sample revealing the evolutionary history of SARS-CoV-2.
 
 
 Quick start
